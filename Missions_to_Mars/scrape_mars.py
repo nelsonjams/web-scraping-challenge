@@ -11,7 +11,10 @@ def init_browser():
     executable_path = {'executable_path': 'chromedriver.exe'}
     browser = Browser('chrome', **executable_path, headless=False)
 #Scrape NASA Mars News Site for the Latest Article and its Text
-def mars_news():
+def mars_scrape():
+    browser = init_browser()
+    mars_dict = {}
+    
     url = 'https://mars.nasa.gov/news/'
     browser.visit(url)
     # HTML object
@@ -24,9 +27,7 @@ def mars_news():
     #and Paragraph Text
     news_p = soup.find("div", class_ ="article_teaser_body").text
     print(news_p)
-#Scrape JPL for Featured Space Image and Save Large Image using splinter
-def jpl_image():
-#image location
+    #Scrape JPL for Featured Space Image and Save Large Image using splinter
     img_url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
     browser.visit(img_url)
 
@@ -44,7 +45,6 @@ def jpl_image():
     featured_image_url = f'https://www.jpl.nasa.gov{split_text[1]}'
     print(featured_image_url)   
 #Scrape Latest Mars Weather Tweet from its Twitter Account
-def mars_weather():
     tweet_url = 'https://twitter.com/marswxreport?lang=en'
     # Retrieve page with the requests module
     response_weather = requests.get(tweet_url)
@@ -53,8 +53,7 @@ def mars_weather():
     mars_weather = soup.find('p', class_='TweetTextSize TweetTextSize--normal js-tweet-text tweet-text').text.strip()
     print(mars_weather)
  #Scrape Mars Facts Webpage for Planet Facts
- def mars_facts():
-    import pandas as pd
+     import pandas as pd
     mars_facts_url = 'https://space-facts.com/mars/'
     browser.visit(mars_facts_url)
     # HTML object
@@ -79,7 +78,6 @@ def mars_weather():
     #save facts to html
     mars_facts_df.to_html('facts_table.html')
 # Obtain 4 Mars Hemispheres Images
-def mars_hemispheres():
     mars_hemispheres_url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
     browser.visit(mars_hemispheres_url)
     html=browser.html
@@ -137,4 +135,15 @@ def mars_hemispheres():
     {'title': "Cerberus Hemisphere", 'img_url': cerberus_href}
     
     ]
-    return hemisphere_image_urls  
+    
+    #store data in a new dictionary
+    mars_dict = {
+        "news_title": news_title,
+        "news_p" : news_text, 
+        "featured_image_url": featured_image_url,
+        "mars_weather": mars_weather,
+        "mars_facts": html_table,
+        "hemisphere_images": hemisphere_image_urls
+    }
+    #end the execution of the function and return the result
+    return mars_dict
